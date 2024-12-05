@@ -1,104 +1,391 @@
-# mvc-express-setup
+# Lead Management Backend Server
 
-**mvc-express-setup** is a simple and customizable backend setup for building web applications using **Express.js** and **MongoDB** with **Mongoose** in a **Model-View-Controller (MVC)** architecture. This package provides a ready-to-use project structure with essential configuration files, making it easier to get started with backend development.
+## Overview
 
----
-
-## 🛠 Features
-
-- 🚀 Fully configured **Express.js** server setup
-- 🗄 MongoDB connection with **Mongoose**
-- 🔑 Basic **MVC** architecture (Models, Views, Controllers)
-- 🌱 Simple API setup for easy extension
-- 🔒 Environment configuration with **dotenv**
-- ⚡ Supports **nodemon** for automatic reloading during development
-- 🖥 Easy project setup via CLI
+This is a backend server built using Node.js and Express for managing leads for a pharmacy store. It includes features like lead creation, filtering, sorting, searching, and pagination. The server uses MongoDB as the database.
 
 ---
 
-## 🚀 Installation
+## Features
 
-### Global Installation
+- **Lead Management**: Add, view, update, and delete leads.
+- **Search and Filter**: Search by `leadName`, `email`, or `contactNumber`, and filter by `status`, `leadSource`, etc.
+- **Sorting**: Sort leads by `nextFollowUpDate`, `status`, or `leadSource`.
+- **Pagination**: Efficiently handle large datasets with pagination.
+- **Secure Authentication**: Role-based access with JWT tokens.
+- **Error Handling**: Comprehensive error handling for invalid inputs and server errors.
 
-You can install **mvc-express-setup** to globally to easily create an Express.js app setup from anywhere on your system.
+---
 
-1. **Install Globally**:
+## Technologies Used
 
-   Run the following command to install the package globally:
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Authentication**: JWT (JSON Web Tokens)
+- **Validation**: Custom validation middleware
+- **Error Handling**: Try-catch blocks with centralized error handling
 
-   ```bash
-   npm install -g mvc-express-setup
+---
 
-* After installing, you can use the
+## Installation and Setup
+
+1. Clone the repository:
    ```
-    setup-express-app
+   git clone <repository-url>
+   cd <repository-folder/Backend>
+   ```
+2. Install dependencies:
+    ```
+     npm install
+    ```
+3. Set up environment variables:
+
+   * Create a .env file in the root 
+    directory.
+   * Add the following:
+      env variables
+    ```
+    PORT= 8080
+    MONGO_URI=<your_mongo_uri>
+    JWT_SECRET=<your_secret_key>
+    ```
+
+### Start the server:
+   ```
+   npm start
+   ```
+
+# Admin Routes
+
+The **Admin Router** is designed to provide administrative functionalities such as admin login and fetching all users' data , update and deleting any lead. The routes require authentication and specific authorization based on roles.
+
+## Routes
+
+### Admin Login
+- **Endpoint**: `POST /admin/login`
+- **Description**: Admin login route to authenticate an administrator.
+- **Request Body**:
   ```
-  command from anywhere to set up a new Express.js project.
+  {
+    "email": "admin_email",
+    "password": "admin_password"
+  }
+  ```
 
-## ⚡️ How It Works
-#### Run the Setup Command:
-  After Runing the `npx setup-express-app` comand in the desired directory.
-- The tool will prompt you to specify a directory. 
-   #### You can either:
-- Enter a directory name to create and set up the project there.
-- Enter . to set up the project in the current directory.
-#### Automatic Project Setup:
-- The tool will create the required files to your selected directory, initialize package.json if it doesn't already exist, and install the necessary dependencies.
+- after login admin can do all **CRUD** 
+  opration on all leads and can get all users.
 
-#### Start Coding:
-- After running the setup, you'll have a basic Express.js app ready with the MVC architecture in place. From here, you can focus on writing your actual application logic.
+## User Routes
 
-## 📂 Project Structure
-- After setting up, your project will have the following structure:
-   ```
-    my-project/
-    ├── src/
-    │   ├── config/
-    │   │   └── db.js            # MongoDB connection configuration
-    │   ├── controllers/
-    │   │   └── exampleController.js  # Controller for handling API logic
-    │   ├── models/
-    │   │   └── exampleModel.js   # Mongoose model
-    │   ├── routes/
-    │      └── exampleRoutes.js  # API routes
-    ├──.env                  # Environment variables (e.g., DB URI)
-    ├── server.js             # Main server file
-    └── package.json              # Project dependencies and scripts
+### 1. Register a New User
+
+- **Endpoint**: `POST /user/register`
+- **Description**: This route allows a new user to register. It requires the user to provide necessary data such as name, email, contact number, etc.
+- **Middleware**: 
+  - `validateRegisterBody`: Validates the incoming request body to ensure all required fields are provided and correctly formatted.
+- **Request Body**:
+  - Contains the user details required for registration.
+- **Response**:
+  - **Success**: 
+    - `201 Created` with a success message and the newly registered user data.
+  - **Error**:
+    - `400 Bad Request` if the request body is missing required fields or if the data is invalid.
+
+---
+
+### 2. Login User
+
+- **Endpoint**: `POST /api/user/login`
+- **Description**: This route allows a user to log in after successful registration. It returns a JWT token if the credentials are correct.
+- **Request Body**:
+  - Requires user credentials such as email and password for authentication.
+- **Response**:
+  - **Success**: 
+    - `200 OK` with a success message and a JWT token.
+  - **Error**:
+    - `401 Unauthorized` if the login credentials are incorrect.
+    - `400 Bad Request` if the request body is incomplete or invalid.
+
+---
+
+## Authentication and Authorization
+
+- **Authentication**: 
+  - For routes requiring authentication, a valid JWT token should be provided in the `Authorization` header as `Bearer <JWT_token>`.
+  
+- **Authorization**:
+  - For some routes, the user needs to have a specific role (`admin`, etc.). This is enforced via the `authorizeRole` middleware.
+
+
+
+
+## Get All Users (Admin Only)
+
+- **Endpoint**: `GET /api/admin/users-data`
+- **Description**: This route fetches all user data. It is only accessible by an authenticated admin.
+- **Authorization**: 
+  - Requires authentication (JWT token) and the role of `admin` to access this route.
+- **Headers**:
+  - `Authorization: Bearer <JWT_token>`
+- **Response**:
+  - **Success**: 
+    - `200 OK` with an array of user data.
+  - **Error**:
+    - `403 Forbidden` if the user does not have the `admin` role or is not authenticated.
+
+## User Routes
+
+### 1. Register a New User
+
+- **Endpoint**: `POST /user/register`
+- **Description**: This route allows a new user to register by providing their personal details. It validates the data and checks if the email is already registered before saving the new user to the database.
+- **Middleware**:
+  - `validateRegisterBody`: Validates the incoming request body to ensure all required fields are provided and correctly formatted.
+- **Request Body**:
+  ```
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "mobileNumber": "1234567890",
+    "password": "password123",
+    "role": "user"
+  }
+  ```
+  name: Full name of the user (required).
+
+email: Email address of the user (required).
+
+mobileNumber: Mobile number of the user (required).
+
+password: Password for the user account (required).
+
+role: Role of the user (e.g., "user", "admin").
+
+Response:
+
+Success:
+201 Created with a success message and the newly registered user data.
+```
+{
+  "message": "User Registration Success",
+  "user": {
+    "_id": "userId",
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "mobileNumber": "1234567890",
+    "role": "user"
+  }
+}
+```
+- ***Error***:
+- 400 Bad Request: If the email is already registered or if required fields are missing or invalid.
+
+## User Routes
+
+### 1. Login User
+
+- **Endpoint**: `POST /user/login`
+- **Description**: This route allows an already registered user to log in by providing their credentials. It authenticates the user and returns a JWT token for subsequent requests.
+
+#### Request Body:
+
+```
+{
+  "email": "johndoe@example.com",
+  "password": "password123"
+}
+```
+
+### Request Parameters
+
+- **email**: The registered email address of the user (required).
+- **password**: The password of the user (required).
+
+### Response
+
+#### Success:
+
+- **Status Code**: `201 Created`
+- **Response Body**:
+  ```
+  {
+    "message": "login success",
+    "user": {
+      "name": "John Doe",
+      "userId": "userId",
+      "role": "user",
+      "token": "<JWT_token>"
+    }
+  }
+  ```
+
+  
+---
+
+## Endpoints for leads
+
+### 1. **Create a Lead**
+- **Endpoint**: `POST /leads/`
+- **Description**: This endpoint allows any authenticated user to create a new lead.
+- **Authorization**: Requires a valid JWT token.
+- **Headers**:
+  - `Authorization: Bearer <JWT_token>`
+- **Request Body**:
+  - JSON payload containing lead details. Example:
+    ```json
+       {
+         "leadName": "John Doe",
+         "contactNumber": "1234567890",
+         "email": "johndoe@example.com",
+         "address": "123 Main St, Springfield",
+         "status": "new",
+         "assignedTo": null,
+         "nextFollowUpDate": "2024-12-10T10:00:00Z",
+         "nextFollowUpTime": "10:00",
+         "leadSource": "online",
+         "conversionDate": null,
+         "leadNotes": "Initial contact made, follow-up needed",
+         "customerType": "retail",
+         "purchaseHistory": [
+           {
+             "productName": "Laptop",
+             "purchaseDate": "2024-11-20T00:00:00Z",
+             "amount": 1000
+           }
+         ],
+         "medicalNeeds": "None"
+       }
+        ```
+- 
+
+### 2. **Get Leads**
+- **Endpoint**: `GET /leads/`
+- **Description**: Fetches a list of leads. Admin users can view all leads, while regular users can access only their own leads.
+- **Authorization**: Requires a valid JWT token.
+- **Headers**:
+  - `Authorization: Bearer <JWT_token>`
+- **Query Parameters**:
+  - **Filters**:
+    - `status`: Filter by lead status.
+    - `assignedTo`: Filter by assigned user.
+    - `leadSource`: Filter by source of the lead.
+    - `leadName`: Filter by lead name.
+    - `search`: Search across lead name, email, and contact number.
+  - **Sorting**:
+    - `sortBy`: Field to sort by (default: `nextFollowUpDate`).
+    - `order`: Sorting order (`asc` or `desc`).
+  - **Pagination**:
+    - `page`: Current page number (default: 1).
+    - `limit`: Number of leads per page (default: 10).
+- **Response**:
+  - **Success**:
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+       {
+         "leadName": "John Doe",
+         "contactNumber": "1234567890",
+         "email": "johndoe@example.com",
+         "address": "123 Main St, Springfield",
+         "status": "new",
+         "assignedTo": "5f8f8d2d1e4e9d430d4e2f3b",
+         "nextFollowUpDate": "2024-12-10T10:00:00Z",
+         "nextFollowUpTime": "10:00",
+         "leadSource": "online",
+         "conversionDate": null,
+         "leadNotes": "Initial contact made, follow-up needed",
+         "customerType": "retail",
+         "purchaseHistory": [
+           {
+             "productName": "Laptop",
+             "purchaseDate": "2024-11-20T00:00:00Z",
+             "amount": 1000
+           }
+         ],
+         "medicalNeeds": "None",
+         "createdBy": "userId"
+       }
+     ```
+  - **Error**:
+    - **401 Unauthorized**: If the user is not authenticated.
+
+---
+
+### 3. **Edit a Lead**
+   - **Endpoint**: `PATCH /leads/:leadId`
+- **Description**: Updates the details of an existing lead. Only admins can access this endpoint.
+- **Authorization**: Requires a valid JWT token and admin role.
+- **Headers**:
+  - `Authorization: Bearer <JWT_token>`
+- **Request Body**:
+  - Partial JSON payload to update the lead. Example:
+    ```json
+    {
+      "status": "contacted",
+      "nextFollowUpDate": "2024-12-22T10:00:00Z"
+    }
     ```
-#### Setup and Configuration
- - Environment Configuration
-   - This package uses a .env file to configure environment variables. The .env file is required for       storing sensitive information like the MongoDB connection URI and other configuration values.
-    Example .env file:
-    ```
-     PORT = <you can run on any port>
-     MONGO_URI = <your mongo db connection string>
-    ```
-  - Make sure to set up your MongoDB URI (MONGO_URI) and any other necessary environment variables.
+- **Response**:
+  - **Success**:
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+      {
+        "message": "lead is update success",
+        "updatedLead": {
+          "leadName": "John Doe",
+          "email": "johndoe@example.com",
+          "contactNumber": "1234567890",
+          "status": "contacted",
+          "nextFollowUpDate": "2024-12-22T10:00:00Z"
+        }
+      }
+      ```
+  - **Error**:
+    - **404 Not Found**: If the `leadId` is invalid or not found.
 
-#### Starting the Server
-- You can start the server by running the following command and If you want to change this command you can change by package.json     
-    ```
-       npm run start
-    ```
-- This will start the server using the nodemon package for automatic reloading during development.
+---
 
-#### 🔧 Usage
-  -  After setting up the project, you can start building your backend by adding your own routes, controllers, and models.
- - The mvc-express-setup package provides the base structure, allowing you to skip setting up the same basic configuration every time you start a new project.
+### 4. **Delete a Lead**
+- **Endpoint**: `DELETE /leads/:leadId`
+- **Description**: Deletes an existing lead by `leadId`. Only admins can access this endpoint.
+- **Authorization**: Requires a valid JWT token and admin role.
+- **Headers**:
+  - `Authorization: Bearer <JWT_token>`
+- **Response**:
+  - **Success**:
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+      {
+        "message": "lead is deleted success"
+      }
+      ```
+  - **Error**:
+    - **404 Not Found**: If the `leadId` is invalid or not found.
 
-#### 📝 Available Scripts
-  - Start the server: Run npm start to start the server.
-  - Run with nodemon: For automatic server reloading, run npx nodemon server.js.
-  - Run tests: You can add tests to your project (optional).
+---
 
-#### 📦 Available Dependencies
-  - express: Web framework for Node.js
-  - mongoose: MongoDB object modeling for Node.js
-  - dotenv: Loads environment variables from a .env file
-  - nodemon: Automatically restarts the server during development
+## Error Handling
+All errors are handled centrally in middleware. Common error codes include:
+- **400 Bad Request**: For invalid input or missing fields.
+- **401 Unauthorized**: For missing or invalid authentication.
+- **403 Forbidden**: For unauthorized role access.
+- **404 Not Found**: For resources that do not exist.
 
-### ⚙️ Customization
-- You can extend the project by adding more models, controllers, routes, and other configurations as per your needs. The project is structured in a way that supports modular and scalable development.
+---
 
-### 🎉 Conclusion
-With mvc-express-setup, you can quickly set up a fully functional Express.js backend project. The tool automates the repetitive setup process, allowing you to focus on building your application rather than configuring basic settings.
+## Notes
+- **Role-based Access Control**:
+  - Admin users have access to all leads and advanced management actions like editing and deleting.
+  - Regular users can only create and view their self-created leads.
+- **Pagination and Sorting**: The API supports pagination and sorting for `GET /leads/` to improve usability.
+
+---
+
+
+
+
+
+
+
