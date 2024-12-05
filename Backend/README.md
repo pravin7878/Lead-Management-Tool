@@ -75,38 +75,6 @@ The **Admin Router** is designed to provide administrative functionalities such 
 - after login admin can do all **CRUD** 
   opration on all leads and can get all users.
 
-## User Routes
-
-### 1. Register a New User
-
-- **Endpoint**: `POST /user/register`
-- **Description**: This route allows a new user to register. It requires the user to provide necessary data such as name, email, contact number, etc.
-- **Middleware**: 
-  - `validateRegisterBody`: Validates the incoming request body to ensure all required fields are provided and correctly formatted.
-- **Request Body**:
-  - Contains the user details required for registration.
-- **Response**:
-  - **Success**: 
-    - `201 Created` with a success message and the newly registered user data.
-  - **Error**:
-    - `400 Bad Request` if the request body is missing required fields or if the data is invalid.
-
----
-
-### 2. Login User
-
-- **Endpoint**: `POST /api/user/login`
-- **Description**: This route allows a user to log in after successful registration. It returns a JWT token if the credentials are correct.
-- **Request Body**:
-  - Requires user credentials such as email and password for authentication.
-- **Response**:
-  - **Success**: 
-    - `200 OK` with a success message and a JWT token.
-  - **Error**:
-    - `401 Unauthorized` if the login credentials are incorrect.
-    - `400 Bad Request` if the request body is incomplete or invalid.
-
----
 
 ## Authentication and Authorization
 
@@ -180,7 +148,7 @@ Success:
 - ***Error***:
 - 400 Bad Request: If the email is already registered or if required fields are missing or invalid.
 
-## User Routes
+
 
 ### 1. Login User
 
