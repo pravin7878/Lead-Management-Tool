@@ -6,6 +6,7 @@ import Dashboard from '../pagas/Deshboard'
 import { Route, Routes } from 'react-router-dom'
 import { PrivateRoute } from './PrivateRoute'
 import AdminLogin from '../pagas/admin'
+import { AddNewLead } from '../pagas/leads/AddNewLead'
 
 export const AllRoutes = () => {
   return (
@@ -18,6 +19,12 @@ export const AllRoutes = () => {
                   <Dashboard />
               </PrivateRoute>
           } />
+          <Route path="/addnew" element={
+              <PrivateRoute>
+                  <AddNewLead />
+              </PrivateRoute>
+          } />
+
           <Route path='/admin/login' element={<AdminLogin/>}/>
           {/* <Route path="/dashboard/file/:_id" element={<SingalFileCard />} /> */}
           {/* <Route path='/private' element={<PrivateRoute />} /> */}

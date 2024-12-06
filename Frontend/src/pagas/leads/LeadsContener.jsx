@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { MdGridView } from "react-icons/md";
 import { FaListUl } from "react-icons/fa";
 import Loading from "../../components/Loading"
@@ -7,6 +7,7 @@ import LeadList from './LeadList';
 import SearchBar from '../../utils/SearchBar';
 import FilterBar from '../../utils/FilterBar';
 import LeadControls from './LeadControler';
+import { getLeads } from '../../../store/actions/lead';
 
 
 export const LeadsContener = () => {
@@ -15,7 +16,11 @@ export const LeadsContener = () => {
     console.log(useSelector(state => state.leads));
     const [leads, setLeads] = useState([]);
     const [totalPages, setTotalPages] = useState(10); // Example total pages
+    const [sortColumn, setsortColumn] = useState({})
+    const [filters, setfilters] = useState({})
+    const [curruntPage, setcurruntPage] = useState(1)
 
+    const dispatch = useDispatch()
     // console.log(isLoading);
     const hendelEdit = () => {
         console.log("edit");
@@ -31,18 +36,24 @@ export const LeadsContener = () => {
     const handleSort = (sortColumn) => {
         console.log('Sort By:', sortColumn);
         // Add sorting logic here
+        setsortColumn(sortColumn)
     };
 
     const handleFilter = (filters) => {
         console.log('Filters:', filters);
+        setfilters(filters)
         // Add filter logic here
     };
 
     const handlePageChange = (page) => {
         console.log('Current Page:', page);
+        setcurruntPage(page)
         // Add pagination logic here
     };
 
+    useEffect(()=>{
+        dispatch(getLeads())
+    },[])
     return (<>
         {/* header */}
         <div className='flex bg-gray-200 justify-between items-center text-center px-3 py-2 rounded-sm'>
@@ -71,7 +82,7 @@ export const LeadsContener = () => {
                 </div>
             </div>
         </div>
-        <LeadControls onFilter={handleFilter} onPageChange={handlePageChange} onSort={handleSort} totalPages={totalPages}/>
+        <LeadControls onFilter={handleFilter} onPageChange={handlePageChange} onSort={handleSort} totalPages={totalPages} />
 
         {/* content */}
         {isLodding && <Loading />}
