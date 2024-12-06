@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getLeads } from '../../../store/actions/lead';
 
 const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
     const [filters, setFilters] = useState({
         status: '',
-        assignedTo: '',
         leadSource: '',
     });
-    const [sortColumn, setSortColumn] = useState('');
+    const [sortColumn, setSortColumn] = useState('nextFollowUpDate');
     const [currentPage, setCurrentPage] = useState(1);
+    const [order, setOrder] = useState("")
 
     const dispatch = useDispatch()
-    
+    const {user} = useSelector(state=>state.auth)
+
     // Handle filter changes
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -26,6 +27,10 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
         if (onSort) onSort(e.target.value);
     };
 
+    const handleOrderChange = (e)=>{
+        setOrder(e.target.value)
+    }
+
     // Handle pagination
     const handlePageChange = (direction) => {
         const newPage = currentPage + direction;
@@ -34,16 +39,29 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
             if (onPageChange) onPageChange(newPage);
         }
     };
- useEffect(()=>{
-    //  getLeads({
-    //      url: `${import.meta.env.VITE_APP_BACKEND_URL}/leads`,
-    //      token: user?.user?.token,
-    //  }) 
- },[])
+
+    const queryParams = {
+        ...filters,
+        sortBy : sortColumn,
+        order,
+        page : currentPage
+    }
+    useEffect(() => {
+         dispatch(getLeads({
+             url: `${import.meta.env.VITE_APP_BACKEND_URL}/leads`,
+             token: user?.user?.token,
+             queryParams
+         }))
+        // console.log(filters);
+        // console.log(sortColumn);
+        // console.log(currentPage);
+        // console.log(order);
+
+    }, [filters, sortColumn, currentPage , order])
 
     return (
         <div className="p-4 bg-gray-100 rounded-lg flex flex-wrap gap-4 justify-between items-center">
-            
+
             {/* Filters */}
             <select
                 name="status"
@@ -55,9 +73,10 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
                 <option value="new">New</option>
                 <option value="contacted">Contacted</option>
                 <option value="qualified">Qualified</option>
+                <option value="in-progress">in-progress</option>
             </select>
 
-            <select
+            {/* <select
                 name="assignedTo"
                 value={filters.assignedTo}
                 onChange={handleFilterChange}
@@ -66,7 +85,7 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
                 <option value="">All Assigned Users</option>
                 <option value="admin">Admin</option>
                 <option value="user">User</option>
-            </select>
+            </select> */}
 
             <select
                 name="leadSource"
@@ -87,10 +106,20 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
                 onChange={handleSortChange}
                 className="p-2 border rounded-md w-full md:w-auto"
             >
-                <option value="">Sort By</option>
+                <option value="nextFollowUpDate">Sort By</option>
                 <option value="nextFollowUpDate">Next Follow-Up Date</option>
                 <option value="status">Status</option>
                 <option value="leadSource">Lead Source</option>
+            </select>
+            <select
+                name="order"
+                value={order}
+                onChange={handleOrderChange}
+                className="p-2 border rounded-md w-full md:w-auto"
+            >
+                <option value="">select order</option>
+                <option value="asc">Sort By Asc</option>
+                <option value="desc">Sort By Desc</option>
             </select>
 
             {/* Pagination */}

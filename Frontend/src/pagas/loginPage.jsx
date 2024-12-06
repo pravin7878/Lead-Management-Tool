@@ -80,6 +80,10 @@ const Login = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-200">
       <div className="bg-white p-6 rounded-lg shadow-xl w-96">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Now</h2>
+        <div className="my-2">
+          <p>admin email : "admin@gmail.com"</p>
+          <p>admin password : "123456"</p>
+        </div>
         <form onSubmit={hendelLogin}>
           {isError && <p className="text-red-500 mb-3">{isError}</p>}
           <label className="block mb-2 text-sm">Email</label>

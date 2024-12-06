@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createLead } from "../../../store/actions/lead";
+import { Link } from "react-router-dom";
 
 const AddLeadForm = () => {
   // State to hold form input values
@@ -22,8 +24,8 @@ const AddLeadForm = () => {
       amount: "",
     },
   });
-const dispatch = useDispatch()
-
+  const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth);
   // Input change handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,11 +52,17 @@ const dispatch = useDispatch()
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
-    dispatch({url: `${import.meta.env.VITE_APP_BACKEND_URL}/leads`,
-      token: user?.user?.token,})
+    dispatch(createLead({
+      url: `${import.meta.env.VITE_APP_BACKEND_URL}/leads`,
+      token: user?.user?.token,
+      data: formData
+    }))
   };
 
-  return (
+  return (<>
+    <div className="w-[70%] m-auto mt-2">
+      <Link className="bg-red-500 text-white font-bold px-2 py-1 rounded-md hover:bg-red-400" to={"/dashboard"}>Go Back</Link>
+    </div>
     <div className="w-[70%] mx-auto p-3 m-3 bg-gray-300 rounded-lg shadow-md">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Add New Lead</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -199,7 +207,7 @@ const dispatch = useDispatch()
             <option value="walk-in">walk-in</option>
             <option value="other">other</option>
           </select>
-         
+
         </div>
 
         {/* Purchase History */}
@@ -235,7 +243,7 @@ const dispatch = useDispatch()
         </div>
       </form>
     </div>
-  );
+  </>);
 };
 
 export default AddLeadForm;

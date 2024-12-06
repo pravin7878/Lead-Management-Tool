@@ -58,6 +58,11 @@ const getLeads = async (req, res, next) => {
 
     // if current user is admin show the all leads
 
+console.log("filters" , filter);
+console.log("sort" , sort);
+console.log("skip" , skip);
+
+
     if (req.user.role === "admin") {
       leads = await Lead.find(filter)
         .sort(sort)
