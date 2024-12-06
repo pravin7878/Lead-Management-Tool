@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getLeads } from '../../../store/actions/lead';
 
 const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
     const [filters, setFilters] = useState({
@@ -9,7 +11,7 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
     const [sortColumn, setSortColumn] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    
+    const dispatch = useDispatch()
     
     // Handle filter changes
     const handleFilterChange = (e) => {
@@ -32,6 +34,12 @@ const LeadControls = ({ onSort, onFilter, onPageChange, totalPages }) => {
             if (onPageChange) onPageChange(newPage);
         }
     };
+ useEffect(()=>{
+    //  getLeads({
+    //      url: `${import.meta.env.VITE_APP_BACKEND_URL}/leads`,
+    //      token: user?.user?.token,
+    //  }) 
+ },[])
 
     return (
         <div className="p-4 bg-gray-100 rounded-lg flex flex-wrap gap-4 justify-between items-center">

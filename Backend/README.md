@@ -210,7 +210,7 @@ Success:
          "assignedTo": null,
          "nextFollowUpDate": "2024-12-10T10:00:00Z",
          "nextFollowUpTime": "10:00",
-         "leadSource": "online",
+         "leadSource": "online",  
          "conversionDate": null,
          "leadNotes": "Initial contact made, follow-up needed",
          "customerType": "retail",
@@ -224,6 +224,13 @@ Success:
          "medicalNeeds": "None"
        }
         ```
+        enum fields
+        ```
+        status :  enum: ["new", "in-progress", "converted", "closed"],
+      default: "new",
+        leadSource  :enum: ["online", "referral", "walk-in", "other"]
+         customerType : enum: ["retail", "wholesale", "other"]
+         ```
 - 
 
 ### 2. **Get Leads**

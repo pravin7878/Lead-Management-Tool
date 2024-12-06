@@ -86,7 +86,7 @@ const Register = () => {
                 mobileNumber: '',
             });
             setTimeout(()=>{
-                navigate("/user/login", { replace: true });
+                navigate("/user/login");
             },3000)
         }
         if (errorMessage) {

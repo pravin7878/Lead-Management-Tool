@@ -21,8 +21,9 @@ const authSlice = createSlice({
     resetState: () => initialState,
     logoutUser: (state) => {
       state.isLogged = false;
-      state.user = {};
-      state.error = "";
+      state.user = {}
+      state.error = ""
+      state.isRegister = ""
 
       // Clear user data from localStorage
       localStorage.removeItem("user");

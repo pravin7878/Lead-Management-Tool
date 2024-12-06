@@ -6,6 +6,8 @@ import { LeadsContener } from './leads/LeadsContener';
 const Deshboard = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
+    console.log(useSelector(state => state.auth));
+    
 
     useEffect(() => {
         dispatch(

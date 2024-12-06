@@ -8,6 +8,7 @@ import SearchBar from '../../utils/SearchBar';
 import FilterBar from '../../utils/FilterBar';
 import LeadControls from './LeadControler';
 import { getLeads } from '../../../store/actions/lead';
+import { useNavigate } from 'react-router-dom';
 
 
 export const LeadsContener = () => {
@@ -21,6 +22,7 @@ export const LeadsContener = () => {
     const [curruntPage, setcurruntPage] = useState(1)
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     // console.log(isLoading);
     const hendelEdit = () => {
         console.log("edit");
@@ -57,7 +59,7 @@ export const LeadsContener = () => {
     return (<>
         {/* header */}
         <div className='flex bg-gray-200 justify-between items-center text-center px-3 py-2 rounded-sm'>
-            <button className='bg-red-500 px-2 py-1 rounded-md text-white font-bold'>Add New</button>
+            <button onClick={() => navigate("/addnew")} className='bg-red-500 px-2 py-1 rounded-md text-white font-bold'>Add New</button>
             <div className='w-[40%]'>
                 <SearchBar />
             </div>

@@ -6,7 +6,7 @@ import Dashboard from '../pagas/Deshboard'
 import { Route, Routes } from 'react-router-dom'
 import { PrivateRoute } from './PrivateRoute'
 import AdminLogin from '../pagas/admin'
-import { AddNewLead } from '../pagas/leads/AddNewLead'
+import AddLeadForm from '../pagas/leads/AddNewLead'
 
 export const AllRoutes = () => {
   return (
@@ -21,7 +21,7 @@ export const AllRoutes = () => {
           } />
           <Route path="/addnew" element={
               <PrivateRoute>
-                  <AddNewLead />
+                  <AddLeadForm />
               </PrivateRoute>
           } />
 
